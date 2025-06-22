@@ -1,30 +1,29 @@
 .sidebar {
   width: 260px;
+  height: 100vh;
   background-color: #202123;
   border-right: 1px solid #4d4d4f;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+  color: #ececf1;
+  position: relative;
 }
 
 .sidebar-toggle {
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: 20px;
+  left: 20px;
   z-index: 1000;
 }
 
 .sidebar-toggle-btn {
   background: #202123;
   border: 1px solid #4d4d4f;
-  border-radius: 6px;
-  color: #ececf1;
+  border-radius: 8px;
   padding: 8px;
+  color: #ececf1;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .sidebar-toggle-btn:hover {
@@ -32,26 +31,27 @@
 }
 
 .sidebar-header {
-  padding: 14px;
+  padding: 16px;
   border-bottom: 1px solid #4d4d4f;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
 }
 
 .new-chat-btn {
-  flex: 1;
   background: transparent;
   border: 1px solid #4d4d4f;
   border-radius: 6px;
+  padding: 8px 12px;
   color: #ececf1;
-  padding: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  flex: 1;
+  margin-right: 8px;
 }
 
 .new-chat-btn:hover {
@@ -62,12 +62,10 @@
   background: transparent;
   border: none;
   color: #ececf1;
-  padding: 8px;
   cursor: pointer;
+  padding: 4px;
   border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .sidebar-close-btn:hover {
@@ -80,21 +78,31 @@
   padding: 8px;
 }
 
+.chat-item-container {
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.chat-item-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .chat-item {
-  width: 100%;
+  flex: 1;
   background: transparent;
   border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
   color: #ececf1;
-  padding: 10px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-radius: 6px;
-  margin-bottom: 2px;
+  gap: 8px;
   font-size: 14px;
   text-align: left;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .chat-item:hover {
@@ -112,8 +120,92 @@
   white-space: nowrap;
 }
 
+.chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chat-item-container:hover .chat-actions {
+  opacity: 1;
+}
+
+.chat-action-btn {
+  background: transparent;
+  border: none;
+  color: #8e8ea0;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+}
+
+.chat-action-btn:hover {
+  background: #2d2d30;
+  color: #ececf1;
+}
+
+.chat-action-btn.rename-btn:hover {
+  color: #10a37f;
+}
+
+.chat-action-btn.delete-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.chat-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+}
+
+.chat-edit-input {
+  flex: 1;
+  background: #343541;
+  border: 1px solid #565869;
+  border-radius: 4px;
+  padding: 6px 8px;
+  color: #ececf1;
+  font-size: 14px;
+}
+
+.chat-edit-input:focus {
+  outline: none;
+  border-color: #10a37f;
+}
+
+.chat-edit-save,
+.chat-edit-cancel {
+  background: transparent;
+  border: none;
+  color: #ececf1;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.chat-edit-save:hover {
+  background: #10a37f;
+}
+
+.chat-edit-cancel:hover {
+  background: #ef4444;
+}
+
 .sidebar-footer {
-  padding: 14px;
+  padding: 16px;
   border-top: 1px solid #4d4d4f;
 }
 
@@ -122,14 +214,14 @@
   background: transparent;
   border: 1px solid #4d4d4f;
   border-radius: 6px;
+  padding: 8px 12px;
   color: #ececf1;
-  padding: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .logout-btn:hover {
@@ -146,12 +238,12 @@
 }
 
 .chat-list::-webkit-scrollbar-thumb {
-  background: #4d4d4f;
+  background: #565869;
   border-radius: 3px;
 }
 
 .chat-list::-webkit-scrollbar-thumb:hover {
-  background: #5a5a5c;
+  background: #6b6c7b;
 }
 
 /* Responsive design */
