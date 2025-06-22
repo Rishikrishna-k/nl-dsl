@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../slices/authSlice';
 import './Login.css'; // We'll create this for styling
 
 // Re-using the Dialog component concept from Registration
@@ -29,8 +31,9 @@ const Login = () => {
         password: '',
     });
     const [dialog, setDialog] = useState({ message: null, type: null });
-    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { status, error } = useSelector((state) => state.auth);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,29 +57,12 @@ const Login = () => {
             return;
         }
 
-        setLoading(true);
         try {
-            const response = await fetch('http://localhost:8000/api/auth/login/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-            
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail || 'Login failed. Please check your credentials.');
-            }
-
-            localStorage.setItem('authTokens', JSON.stringify({ access: data.access, refresh: data.refresh }));
-            
+            const result = await dispatch(login(formData)).unwrap();
             setDialog({ message: 'Login successful! Redirecting...', type: 'success' });
-            setTimeout(() => navigate('/dashboard'), 7000);
-
+            setTimeout(() => navigate('/dashboard'), 1000);
         } catch (err) {
-            setDialog({ message: err.message, type: 'error' });
-        } finally {
-            setLoading(false);
+            setDialog({ message: err || 'Login failed. Please check your credentials.', type: 'error' });
         }
     };
 
@@ -135,8 +121,8 @@ const Login = () => {
                         </>
                     )}
                     
-                    <button type="submit" className="submit-btn" disabled={loading}>
-                        {loading ? 'Continuing...' : 'Continue'}
+                    <button type="submit" className="submit-btn" disabled={status === 'loading'}>
+                        {status === 'loading' ? 'Continuing...' : 'Continue'}
                     </button>
                     {step === 2 && (
                         <button type="button" className="back-btn" onClick={() => setStep(1)}>

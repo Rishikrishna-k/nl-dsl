@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { restoreSession } from './slices/authSlice';
 import Registration from './pages/Registration';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -18,6 +20,12 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
+
   return (
     <div className="App">
       <Routes>
