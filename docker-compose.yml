@@ -1,48 +1,59 @@
-version: "3.9"
+version: '3.9'
 
 services:
   db:
-    image: postgres:15-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    expose:
-      - "5432"
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${DATABASE_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build: ./backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    restart: always
+    env_file:
+      - .env
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - SECRET_KEY=your-secret-key # Change this in production
-      - DEBUG=True
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    ports:
+      - "${BACKEND_PORT}:8000"
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    command: npm start
+    restart: always
+    env_file:
+      - .env
     ports:
-      - "3000:3000"
-    command: npm run start
+      - "${FRONTEND_PORT}:3000"
+    depends_on:
+      - backend
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
-      - VITE_API_URL=http://localhost:8000/api
-    stdin_open: true
-    tty: true
 
 volumes:
   postgres_data:
