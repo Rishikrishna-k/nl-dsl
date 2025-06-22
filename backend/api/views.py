@@ -6,6 +6,7 @@ from rest_framework import status, permissions, viewsets
 from rest_framework.decorators import api_view, action
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from .models import UserProfile, Project, Chat, Message, UserSettings
 from .serializers import (
     UserSerializer, UserProfileSerializer, ProjectSerializer, 
@@ -13,6 +14,8 @@ from .serializers import (
     ProjectDetailSerializer, MessageDetailSerializer, UserSettingsSerializer,
     DashboardProjectSerializer, DashboardChatSerializer
 )
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 # ---
 # Custom Permission: Only allow owners to edit their own objects
@@ -416,6 +419,56 @@ class HealthCheckView(APIView):
             'database': db_status,
             'timestamp': '2025-06-22T04:16:00Z'
         })
+
+# ---
+# Custom Token Serializer for Email Login
+# ---
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # We want to use 'email' for login, not 'username'
+        self.fields['email'] = serializers.EmailField()
+        self.fields['username'] = serializers.CharField(required=False, read_only=True)
+
+    def validate(self, attrs):
+        from django.contrib.auth import authenticate
+
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        # Find the user by email
+        try:
+            user_obj = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError('No account found with this email address.')
+
+        # Authenticate with the found username and provided password
+        user = authenticate(username=user_obj.username, password=password)
+
+        if not user:
+            raise serializers.ValidationError('Incorrect password. Please try again.')
+
+        # If authentication is successful, generate tokens
+        refresh = self.get_token(user)
+        
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+            }
+        }
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    """
+    Custom view for obtaining JWT token pair.
+    - Accepts email and password for login.
+    - Returns access and refresh tokens.
+    """
+    serializer_class = MyTokenObtainPairSerializer
 
 # ---
 # User Registration View

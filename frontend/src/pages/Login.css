@@ -30,4 +30,30 @@
 
 .signup-prompt a:hover {
     text-decoration: underline;
+}
+
+/* Inherit styles from Registration.css for consistency */
+@import url('../Registration.css');
+
+/* Specific styles for Login Page if any are needed */
+
+.login-form-wrapper .email-display {
+    text-align: left;
+    margin-bottom: 1rem;
+    border: 1px solid #c7c7c7;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    background-color: #f7f7f7;
+}
+
+.login-form-wrapper .email-display label {
+    font-size: 0.8rem;
+    color: #6e6e6e;
+    display: block;
+}
+
+.login-form-wrapper .email-display p {
+    margin: 0.2rem 0 0 0;
+    font-size: 1rem;
+    font-weight: 500;
 } 
