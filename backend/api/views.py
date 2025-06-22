@@ -541,3 +541,64 @@ class UserRegistrationView(APIView):
             return Response({
                 'error': 'Registration failed. Please try again.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# ---
+# User Deletion View
+# ---
+class UserDeletionView(APIView):
+    """
+    API endpoint for user deletion.
+    - Deletes a user account and all associated data.
+    - Requires authentication and user can only delete their own account.
+    - Cascades to delete all related data (projects, chats, messages, profiles).
+    - Returns confirmation of deletion.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def delete(self, request):
+        """
+        Delete the authenticated user's account and all associated data.
+        - Deletes user profile, projects, chats, messages, and settings.
+        - Requires password confirmation for security.
+        - Returns confirmation message.
+        """
+        from django.contrib.auth.models import User
+        
+        # Get password confirmation from request
+        password = request.data.get('password')
+        if not password:
+            return Response({
+                'error': 'Password confirmation is required for account deletion'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Verify password
+        if not request.user.check_password(password):
+            return Response({
+                'error': 'Incorrect password'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = request.user
+            username = user.username
+            
+            # Store user info for response
+            user_info = {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'date_joined': user.date_joined
+            }
+            
+            # Delete user (this will cascade to related data due to CASCADE relationships)
+            user.delete()
+            
+            return Response({
+                'message': 'User account deleted successfully',
+                'deleted_user': user_info,
+                'note': 'All associated data (projects, chats, messages, profile) has been deleted'
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'error': 'Failed to delete user account. Please try again.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

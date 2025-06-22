@@ -1,0 +1,256 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #ffffff;
+    color: #101010;
+}
+
+.registration-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding-top: 5%;
+    box-sizing: border-box;
+}
+
+.registration-form-wrapper {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logo-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.form-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.input-group {
+    text-align: left;
+}
+
+.input-group label {
+    display: none; /* The design uses placeholders as labels */
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #c7c7c7;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #10a37f;
+    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.2);
+}
+
+.submit-btn {
+    background-color: #101010;
+    color: #ffffff;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+.submit-btn:hover {
+    background-color: #333333;
+}
+
+.submit-btn:disabled {
+    background-color: #555555;
+    cursor: not-allowed;
+}
+
+.login-prompt {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.login-prompt a {
+    color: #10a37f;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #6e6e6e;
+    width: 100%;
+    margin: 1.5rem 0;
+}
+
+.separator::before,
+.separator::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #c7c7c7;
+}
+
+.separator:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.separator:not(:empty)::after {
+    margin-left: .5em;
+}
+
+.social-logins {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.social-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.9rem;
+    border: 1px solid #c7c7c7;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.social-btn:hover {
+    background-color: #f7f7f7;
+    border-color: #aeaeae;
+}
+
+.error-dialog {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+/* --- New Dialog Styles --- */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialog-box {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.dialog-box p {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+}
+
+.dialog-link {
+    display: block;
+    margin-bottom: 1rem;
+    color: #10a37f;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.dialog-link:hover {
+    text-decoration: underline;
+}
+
+.dialog-overlay.error .dialog-box p {
+    color: #c62828;
+}
+
+.dialog-overlay.success .dialog-box p {
+    color: #10a37f;
+}
+
+.dialog-box .dialog-close-btn {
+    background-color: #101010;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dialog-box .dialog-close-btn:hover {
+    background-color: #333333;
+}
+
+/* --- New Back Button Styles --- */
+.back-btn {
+    background-color: transparent;
+    color: #6e6e6e;
+    border: 1px solid #c7c7c7;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+.back-btn:hover {
+    background-color: #f7f7f7;
+    border-color: #aeaeae;
+} 

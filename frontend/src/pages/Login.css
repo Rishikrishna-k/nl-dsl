@@ -1,0 +1,33 @@
+/* Use the same container and wrapper styles as Registration for consistency */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding-top: 5%;
+    box-sizing: border-box;
+}
+
+.login-form-wrapper {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.signup-prompt {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.signup-prompt a {
+    color: #10a37f;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.signup-prompt a:hover {
+    text-decoration: underline;
+} 
