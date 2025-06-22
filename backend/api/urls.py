@@ -3,7 +3,8 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
     UserProfileViewSet, ProjectViewSet, ChatViewSet, MessageViewSet, 
-    UserSettingsViewSet, DashboardView, HealthCheckView, AllProjectsView, ProjectChatsView, ChatMessagesView
+    UserSettingsViewSet, DashboardView, HealthCheckView, AllProjectsView, ProjectChatsView, ChatMessagesView,
+    UserRegistrationView
 )
 
 # Create a router and register our viewsets with it
@@ -21,6 +22,7 @@ urlpatterns = [
     # JWT Authentication endpoints
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/register/', UserRegistrationView.as_view(), name='user_register'),
     
     # Dashboard and utility endpoints
     path('dashboard/', DashboardView.as_view(), name='dashboard'),

@@ -416,3 +416,128 @@ class HealthCheckView(APIView):
             'database': db_status,
             'timestamp': '2025-06-22T04:16:00Z'
         })
+
+# ---
+# User Registration View
+# ---
+class UserRegistrationView(APIView):
+    """
+    API endpoint for user registration.
+    - Creates a new user account with username, email, and password.
+    - Automatically creates a UserProfile for the new user.
+    - Returns JWT tokens upon successful registration.
+    - Includes comprehensive validation for username, email, and password.
+    """
+    permission_classes = []
+    
+    def post(self, request):
+        """
+        Register a new user with the provided credentials.
+        - Validates username, email, and password.
+        - Creates user and profile.
+        - Returns JWT tokens for immediate login.
+        """
+        from django.contrib.auth.models import User
+        from django.contrib.auth.password_validation import validate_password
+        from django.core.exceptions import ValidationError
+        from rest_framework_simplejwt.tokens import RefreshToken
+        
+        # Extract data from request
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        display_name = request.data.get('display_name', '')
+        
+        # Validate required fields
+        if not username or not email or not password:
+            return Response({
+                'error': 'Username, email, and password are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            return Response({
+                'error': 'Username already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            return Response({
+                'error': 'Email already exists'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate password strength
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({
+                'error': 'Password validation failed',
+                'details': list(e.messages)
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate email format
+        from django.core.validators import validate_email
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({
+                'error': 'Invalid email format'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate username format (alphanumeric and underscore only)
+        import re
+        if not re.match(r'^[a-zA-Z0-9_]+$', username):
+            return Response({
+                'error': 'Username can only contain letters, numbers, and underscores'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate username length
+        if len(username) < 3 or len(username) > 30:
+            return Response({
+                'error': 'Username must be between 3 and 30 characters'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            # Create the user
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+            
+            # Create user profile
+            profile = UserProfile.objects.create(
+                user=user,
+                display_name=display_name or username
+            )
+            
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            
+            return Response({
+                'message': 'User registered successfully',
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'date_joined': user.date_joined
+                },
+                'profile': {
+                    'id': profile.id,
+                    'display_name': profile.display_name,
+                    'bio': profile.bio,
+                    'avatar_url': profile.avatar_url
+                },
+                'tokens': {
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh)
+                }
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            # If anything goes wrong, clean up
+            if user:
+                user.delete()
+            return Response({
+                'error': 'Registration failed. Please try again.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
