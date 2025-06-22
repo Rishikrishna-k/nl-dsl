@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view, action
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import UserProfile, Project, Chat, Message, UserSettings
+from .models import UserProfile, Project, Chat, Message, UserSettings, Branch
 from .serializers import (
     UserSerializer, UserProfileSerializer, ProjectSerializer, 
     ChatSerializer, MessageSerializer, ChatDetailSerializer,
@@ -182,7 +182,10 @@ class ChatViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         # Set the owner to the current user when creating
-        serializer.save(owner=self.request.user)
+        chat = serializer.save(owner=self.request.user, message_graph={})
+        # Create a default branch for the chat
+        default_branch = Branch.objects.create(chat=chat, head_message_id=None)
+        print(f"Created chat {chat.id} with default branch {default_branch.branch_id}")
     
     @action(detail=True, methods=['post'])
     def add_message(self, request, pk=None):
@@ -190,13 +193,59 @@ class ChatViewSet(viewsets.ModelViewSet):
         Custom action to add a new message to a chat.
         - POST to /api/chats/{chat_id}/add_message/
         - Only the chat owner can add messages.
+        - Creates both user message and AI response.
         """
         chat = self.get_object()
-        serializer = MessageSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(chat=chat)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(f"Adding message to chat {chat.id}")
+        print(f"Request data: {request.data}")
+        
+        # Create user message
+        user_message_data = {
+            'chat': chat.id,
+            'role': 'user',
+            'content': request.data.get('content', ''),
+        }
+        
+        user_serializer = MessageSerializer(data=user_message_data)
+        if not user_serializer.is_valid():
+            print(f"User message validation errors: {user_serializer.errors}")
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        user_message = user_serializer.save()
+        print(f"Created user message: {user_message.id}")
+        
+        # Create AI response
+        ai_message_data = {
+            'chat': chat.id,
+            'role': 'assistant',
+            'content': f"This is a mock AI response to: {request.data.get('content', '')}",
+        }
+        
+        ai_serializer = MessageSerializer(data=ai_message_data)
+        if not ai_serializer.is_valid():
+            print(f"AI message validation errors: {ai_serializer.errors}")
+            return Response(ai_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        ai_message = ai_serializer.save()
+        print(f"Created AI message: {ai_message.id}")
+        
+        # Update the default branch head to the AI message
+        try:
+            default_branch = chat.branches.first()
+            if default_branch:
+                default_branch.head_message_id = ai_message.id
+                default_branch.save()
+                print(f"Updated branch head to: {ai_message.id}")
+        except Exception as e:
+            print(f"Error updating branch: {e}")
+        
+        # Return both messages
+        response_data = {
+            'user_message': MessageDetailSerializer(user_message).data,
+            'ai_message': MessageDetailSerializer(ai_message).data,
+        }
+        
+        return Response(response_data, status=status.HTTP_201_CREATED)
     
     @action(detail=True, methods=['patch'])
     def update_status(self, request, pk=None):

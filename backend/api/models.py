@@ -69,6 +69,7 @@ class Chat(models.Model):
     description = models.TextField(blank=True)
     ai_model = models.CharField(max_length=100, blank=True, help_text="AI model to use for this chat")
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
+    message_graph = models.JSONField(blank=True, default=dict, help_text="Graph of message relationships: {id: {parent, children}}")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -125,6 +126,51 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.role} message in {self.chat.name} ({self.id})"
+
+class Branch(models.Model):
+    """
+    Branches in chat conversations for handling message editing and branching.
+    Each branch represents a different conversation path.
+    """
+    branch_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='branches')
+    head_message_id = models.UUIDField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'branch'
+        indexes = [
+            models.Index(fields=['chat']),
+            models.Index(fields=['head_message_id']),
+        ]
+
+    def __str__(self):
+        return f"Branch {self.branch_id} in {self.chat.name}"
+
+class Edit(models.Model):
+    """
+    Records of message edits that create new conversation branches.
+    """
+    edit_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='edits')
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='edits')
+    prev_message_id = models.UUIDField()
+    new_message_id = models.UUIDField()
+    new_head_id = models.UUIDField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'edit'
+        indexes = [
+            models.Index(fields=['chat']),
+            models.Index(fields=['branch']),
+            models.Index(fields=['prev_message_id']),
+            models.Index(fields=['new_message_id']),
+            models.Index(fields=['new_head_id']),
+        ]
+
+    def __str__(self):
+        return f"Edit {self.edit_id} in {self.chat.name}"
 
 class UserSettings(models.Model):
     """
