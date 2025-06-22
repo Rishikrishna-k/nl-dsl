@@ -1,0 +1,120 @@
+.code-block-container {
+  background-color: #2D2D2D;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 10px 0;
+  border: 1px solid #444;
+  width: 100%;
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3a3a3a;
+  padding: 8px 12px;
+  color: #ccc;
+  font-family: sans-serif;
+  font-size: 0.9em;
+}
+
+.code-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.code-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-action-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.header-action-btn:hover {
+    background-color: #4f4f4f;
+    color: #fff;
+}
+
+.syntax-highlighter {
+  background-color: #2D2D2D !important;
+  padding: 1rem !important;
+  margin: 0 !important;
+  border-radius: 0 0 8px 8px;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 400px; 
+  overflow: auto;
+}
+
+.syntax-highlighter::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.syntax-highlighter::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
+
+.syntax-highlighter::-webkit-scrollbar-track {
+  background-color: #3a3a3a;
+}
+
+.language-tag {
+  color: #8e8ea0;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+  background-color: #21262d;
+  border-color: #8b949e;
+}
+
+.copy-button svg {
+  color: #8e8ea0;
+}
+
+.copy-button:hover svg,
+.copy-button:hover span {
+  color: #c9d1d9;
+}
+
+.syntax-highlighter code,
+.syntax-highlighter pre {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace !important;
+}
+
+.syntax-highlighter .linenumber {
+  color: #484f58 !important;
+  padding-right: 1.5em !important;
+  text-align: left !important;
+}
+
+.code-block-container.expanded .syntax-highlighter {
+  max-height: 80vh;
+} 

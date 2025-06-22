@@ -42,6 +42,14 @@ const messagesSlice = createSlice({
       state.status = 'idle';
       state.error = null;
     },
+    formatAsCode(state, action) {
+      const { messageId } = action.payload;
+      const message = state.items.find(item => item.id === messageId);
+      if (message) {
+        // Use python as a default language for the new code block
+        message.content = "```python\n" + message.content + "\n```";
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -76,5 +84,5 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { clearMessages } = messagesSlice.actions;
+export const { clearMessages, formatAsCode } = messagesSlice.actions;
 export default messagesSlice.reducer; 

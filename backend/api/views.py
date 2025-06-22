@@ -214,11 +214,27 @@ class ChatViewSet(viewsets.ModelViewSet):
         user_message = user_serializer.save()
         print(f"Created user message: {user_message.id}")
         
+        # Get user content to check for keywords
+        user_content = request.data.get('content', '').lower()
+        ai_content = f"This is a standard text response for your query about: {request.data.get('content', '')}"
+
+        # If user asks for code, provide a Python snippet
+        if 'code' in user_content or 'python' in user_content:
+            code_snippet = (
+                "def process_data(data_source):\n"
+                "    # This is a sample code block.\n"
+                "    items = [1, 2, 3, 4, 5]\n"
+                "    for item in items:\n"
+                "        print(f'Processing item: {item}')\n"
+                "    return 'Completed'"
+            )
+            ai_content = f"```python\n{code_snippet}\n```"
+
         # Create AI response
         ai_message_data = {
             'chat': chat.id,
             'role': 'assistant',
-            'content': f"This is a mock AI response to: {request.data.get('content', '')}",
+            'content': ai_content,
         }
         
         ai_serializer = MessageSerializer(data=ai_message_data)
