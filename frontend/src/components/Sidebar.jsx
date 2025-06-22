@@ -7,10 +7,11 @@ import { logout } from '../slices/authSlice';
 const Sidebar = ({ 
   isOpen, 
   toggleSidebar, 
-  chats = [], 
+  chats, 
   currentChatId, 
+  onNewChat, 
   onChatSelect, 
-  onNewChat 
+  onLogout 
 }) => {
   const projects = [
     { name: 'finetuning' },
@@ -35,9 +36,9 @@ const Sidebar = ({
     }
   };
 
-  const handleChatSelect = (chatId) => {
+  const handleChatSelect = (chat) => {
     if (onChatSelect) {
-      onChatSelect(chatId);
+      onChatSelect(chat);
     }
   };
 
@@ -51,69 +52,63 @@ const Sidebar = ({
     return 'No messages yet';
   };
 
-  return (
-    <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
-      <button className="close-btn" onClick={toggleSidebar}>
-        &times;
-      </button>
-      <div className="sidebar-header">
-        <button className="new-chat-btn" onClick={handleNewChat}>
-          <span>+</span>
-          <span>New chat</span>
+  if (!isOpen) {
+    return (
+      <div className="sidebar-toggle">
+        <button onClick={toggleSidebar} className="sidebar-toggle-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12L5 10L7 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M21 12L19 14L17 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 3L14 5L12 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 21L10 19L12 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
-        <div className="search-library-buttons">
-          <button>
-            <span>🔍</span>
-            <span>Search chats</span>
-          </button>
-          <button>
-            <span>📚</span>
-            <span>Library</span>
-          </button>
-        </div>
       </div>
-      <div className="sidebar-content">
-        <div className="projects-section">
-          <div className="section-header">
-            <button className="new-project-btn">New project</button>
-          </div>
-          <ul className="projects-list">
-            {projects.map((project, index) => (
-              <li key={index}>
-                <span>📁</span> {project.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="chats-section">
-           <div className="section-header">
-            <span>Chats</span>
-          </div>
-          <ul className="chats-list">
-            {chats.map((chat) => (
-              <li 
-                key={chat.id} 
-                className={currentChatId === chat.id ? 'active' : ''}
-                onClick={() => handleChatSelect(chat.id)}
-              >
-                <div className="chat-item">
-                  <div className="chat-name">{chat.name}</div>
-                  <div className="chat-preview">{getChatPreview(chat)}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+    );
+  }
+
+  return (
+    <div className="sidebar">
+      <div className="sidebar-header">
+        <button onClick={handleNewChat} className="new-chat-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          New chat
+        </button>
+        <button onClick={toggleSidebar} className="sidebar-close-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       </div>
+
+      <div className="chat-list">
+        {chats.map((chat) => (
+          <button
+            key={chat.id}
+            onClick={() => handleChatSelect(chat)}
+            className={`chat-item ${currentChatId === chat.id ? 'active' : ''}`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span className="chat-title">{chat.name}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="sidebar-footer">
-        {auth.user && (
-          <div className="user-profile">
-            <span className="user-email">{auth.user.email}</span>
-            <button onClick={handleLogout} className="logout-btn">
-              Logout
-            </button>
-          </div>
-        )}
+        <button onClick={handleLogout} className="logout-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Log out
+        </button>
       </div>
     </div>
   );

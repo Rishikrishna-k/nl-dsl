@@ -51,4 +51,30 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #343541;
+  color: #ececf1;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  
+  .chat-main {
+    height: calc(100vh - 60px);
+  }
 } 

@@ -60,13 +60,22 @@ const ChatView = ({ chat }) => {
 
   const renderMessage = (message) => (
     <div key={message.id} className={`message ${message.role}`}>
-      <div className="message-avatar">
-        {message.role === 'user' ? '👤' : '🤖'}
-      </div>
-      <div className="message-content">
-        <div className="message-text">{message.content}</div>
-        <div className="message-time">
-          {new Date(message.created_at).toLocaleTimeString()}
+      <div className="message-container">
+        <div className="message-avatar">
+          {message.role === 'user' ? (
+            <div className="user-avatar">U</div>
+          ) : (
+            <div className="ai-avatar">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+          )}
+        </div>
+        <div className="message-content">
+          <div className="message-text">{message.content}</div>
         </div>
       </div>
     </div>
@@ -75,31 +84,46 @@ const ChatView = ({ chat }) => {
   if (!chat) {
     return (
       <div className="chat-view">
-        <div className="chat-header">
-          <h2>New Chat</h2>
-        </div>
-        <div className="chat-body">
-          <div className="new-chat-welcome">
-            <div className='new-chat-in-test'>
-              <h3>Start a new conversation</h3>
-              <p>Ask me anything and I'll help you out!</p>
-            </div>
-            <div className="action-buttons">
-              <button>Add files</button>
-              <button>Add instructions</button>
+        <div className="welcome-screen">
+          <div className="welcome-content">
+            <h1>How can I help you today?</h1>
+            <div className="suggestion-grid">
+              <button className="suggestion-card">
+                <div className="suggestion-icon">💡</div>
+                <div className="suggestion-text">Explain quantum computing</div>
+              </button>
+              <button className="suggestion-card">
+                <div className="suggestion-icon">🎨</div>
+                <div className="suggestion-text">Write a creative story</div>
+              </button>
+              <button className="suggestion-card">
+                <div className="suggestion-icon">🔧</div>
+                <div className="suggestion-text">Help with coding</div>
+              </button>
+              <button className="suggestion-card">
+                <div className="suggestion-icon">📚</div>
+                <div className="suggestion-text">Analyze a book</div>
+              </button>
             </div>
           </div>
         </div>
-        <div className="chat-input">
-          <input
-            type="text"
-            placeholder="Ask anything"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled
-          />
-          <button disabled>{'➤'}</button>
+        <div className="chat-input-container">
+          <div className="chat-input-wrapper">
+            <input
+              type="text"
+              placeholder="Message ChatGPT..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled
+            />
+            <button disabled className="send-button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -107,43 +131,69 @@ const ChatView = ({ chat }) => {
 
   return (
     <div className="chat-view">
-      <div className="chat-header">
-        <h2>{chat.name || 'Chat'}</h2>
-        {error && <div className="error-message">Error: {error}</div>}
-      </div>
-      <div className="chat-body">
+      <div className="messages-container">
         {loading === 'loading' ? (
-          <div className="loading-messages">Loading messages...</div>
+          <div className="loading-messages">
+            <div className="loading-spinner"></div>
+            <span>Loading messages...</span>
+          </div>
         ) : messages.length === 0 ? (
-          <div className="new-chat-welcome">
-            <div className='new-chat-in-test'>
-              <h3>Start a new conversation</h3>
-              <p>Ask me anything and I'll help you out!</p>
-            </div>
-            <div className="action-buttons">
-              <button>Add files</button>
-              <button>Add instructions</button>
+          <div className="welcome-screen">
+            <div className="welcome-content">
+              <h1>How can I help you today?</h1>
+              <div className="suggestion-grid">
+                <button className="suggestion-card">
+                  <div className="suggestion-icon">💡</div>
+                  <div className="suggestion-text">Explain quantum computing</div>
+                </button>
+                <button className="suggestion-card">
+                  <div className="suggestion-icon">🎨</div>
+                  <div className="suggestion-text">Write a creative story</div>
+                </button>
+                <button className="suggestion-card">
+                  <div className="suggestion-icon">🔧</div>
+                  <div className="suggestion-text">Help with coding</div>
+                </button>
+                <button className="suggestion-card">
+                  <div className="suggestion-icon">📚</div>
+                  <div className="suggestion-text">Analyze a book</div>
+                </button>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="messages-container">
+          <div className="messages-list">
             {messages.map(renderMessage)}
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
-      <div className="chat-input">
-        <input
-          type="text"
-          placeholder="Ask anything"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          disabled={isSending || loading === 'loading'}
-        />
-        <button onClick={handleSendMessage} disabled={isSending || loading === 'loading' || !inputValue.trim()}>
-          {isSending ? '⏳' : '➤'}
-        </button>
+      
+      <div className="chat-input-container">
+        <div className="chat-input-wrapper">
+          <input
+            type="text"
+            placeholder="Message ChatGPT..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isSending || loading === 'loading'}
+          />
+          <button 
+            onClick={handleSendMessage} 
+            disabled={isSending || loading === 'loading' || !inputValue.trim()}
+            className="send-button"
+          >
+            {isSending ? (
+              <div className="sending-spinner"></div>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
