@@ -30,17 +30,11 @@ const MessageActions = ({ message, onRegenerate }) => {
         </button>
       )}
       {!isCode && (
-        <button onClick={handleCopy} className="action-btn" title={isCopied ? "Copied!" : "Copy"}>
+        <button onClick={handleCopy} className="action-btn copy-btn" title={isCopied ? "Copied!" : "Copy"}>
             {isCopied ? (
-                <>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <span>Copied</span>
-                </>
             ) : (
-                <>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 16H6C4.89543 16 4 15.1046 4 14V6C4 4.89543 4.89543 4 6 4H14C15.1046 4 16 4.89543 16 6V8M18 10H10C8.89543 10 8 10.8954 8 12V20C8 21.1046 8.89543 22 10 22H18C19.1046 22 20 21.1046 20 20V12C20 10.8954 19.1046 10 18 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <span>Copy</span>
-                </>
             )}
         </button>
       )}
@@ -109,24 +103,34 @@ const ChatView = ({ chat }) => {
 
     const wrapperClass = `message-wrapper ${message.role} ${isCode && message.role === 'assistant' ? 'assistant-code' : ''}`;
 
+    if (message.role === 'user') {
+      return (
+        <div key={message.id || index} className={wrapperClass}>
+          <div className="user-message-container">
+            <div className="message-content">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div key={message.id || index} className={wrapperClass}>
         <div className="message-container">
-          {message.role === 'assistant' && (
-            <div className="message-avatar">
-              <div className="ai-avatar">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
+          <div className="message-avatar">
+            <div className="ai-avatar">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
-          )}
+          </div>
           <div className="message-content-wrapper">
-            {message.role === 'assistant' && (
-              <MessageActions message={message} onRegenerate={handleFormatAsCode} />
-            )}
+            <MessageActions message={message} onRegenerate={handleFormatAsCode} />
             <div className="message-content">
               {isCode ? (
                 <CodeBlock language={language} code={code} />

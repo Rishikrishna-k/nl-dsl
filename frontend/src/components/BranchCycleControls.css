@@ -1,0 +1,23 @@
+.branch-controls-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  gap: 12px;
+  background-color: #2a2b3d;
+  color: #fff;
+  font-size: 0.9em;
+}
+
+.branch-controls-container button {
+  background: #40414f;
+  border: 1px solid #565869;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.branch-controls-container button:hover {
+  background: #494a5a;
+} 

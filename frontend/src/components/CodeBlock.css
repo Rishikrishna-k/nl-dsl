@@ -4,7 +4,10 @@
   overflow: hidden;
   margin: 10px 0;
   border: 1px solid #444;
-  width: 100%;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  box-sizing: border-box;
 }
 
 .code-block-header {
