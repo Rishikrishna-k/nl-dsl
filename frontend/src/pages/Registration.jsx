@@ -107,7 +107,7 @@ const Registration = () => {
                 )}
             </Dialog>
             <div className="registration-form-wrapper">
-                <h1 className="logo-title">ChatGPT</h1>
+                <h1 className="logo-title">DSLGPT</h1>
                 <h2 className="form-title">Create an account</h2>
 
                 {step === 1 ? (

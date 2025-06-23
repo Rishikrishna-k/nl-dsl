@@ -176,7 +176,7 @@ const ChatView = ({ chat }) => {
           <div className="chat-input-wrapper">
             <input
               type="text"
-              placeholder="Message ChatGPT..."
+              placeholder="Message DSLGPT..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
@@ -238,7 +238,7 @@ const ChatView = ({ chat }) => {
         <div className="chat-input-wrapper">
           <input
             type="text"
-            placeholder="Message ChatGPT..."
+            placeholder="Message DSLGPT..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}

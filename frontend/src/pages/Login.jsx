@@ -82,7 +82,7 @@ const Login = () => {
             </Dialog>
 
             <div className="login-form-wrapper">
-                <h1 className="logo-title">ChatGPT</h1>
+                <h1 className="logo-title">DSLGPT</h1>
                 <h2 className="form-title">Welcome back</h2>
                 
                 <form onSubmit={step === 1 ? handleNextStep : handleSubmit}>
